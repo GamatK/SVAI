@@ -1,17 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SVAI</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SVAI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
 </head>
 <body>
-    <h1>Welcome to SVAI 🚀</h1>
-    <p>This is your hackathon project frontend.</p>
-    <button onclick="sayHello()">Click Me</button>
+  <header class="nav">
+    <div class="brand">SVAI</div>
+    <nav class="tabs">
+      <button class="tab active" data-target="#civic">CivicBot</button>
+      <button class="tab" data-target="#wallet">Emergency Wallet</button>
+    </nav>
+  </header>
 
-    <script src="script.js"></script>
+  <main class="container">
+    <!-- CivicBot -->
+    <section id="civic" class="card show">
+      <h2>Find Government Steps</h2>
+      <div class="row">
+        <input id="topic" placeholder="e.g., birth certificate" value="birth certificate" />
+        <button id="askBtn">Get Steps</button>
+      </div>
+      <div id="civicStatus" class="status"></div>
+      <ol id="steps" class="steps"></ol>
+    </section>
+
+    <!-- Emergency Wallet -->
+    <section id="wallet" class="card">
+      <h2>Emergency Wallet</h2>
+      <p class="muted">One-tap access to ID mini-card & ICE contact</p>
+      <button id="walletBtn">Show Info</button>
+      <div id="walletBox" class="wallet-box hidden">
+        <div><strong>Name:</strong> <span id="wName">—</span></div>
+        <div><strong>ID:</strong> <span id="wId">—</span></div>
+        <div><strong>ICE:</strong> <span id="wIce">—</span></div>
+        <div class="qr" id="qrBox" aria-label="QR placeholder">QR</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">© SVAI — Hackathon demo</footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
-
