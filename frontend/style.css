@@ -23,7 +23,7 @@
   --accent-2: #62d39a;
   --danger: #ff6b6b;
   --shadow: 0 8px 30px rgba(0,0,0,.35);
-  --glass: backdrop-filter: blur(12px) saturate(130%);
+
 }
 body.light {
   /* Light theme */
@@ -40,7 +40,7 @@ body.light {
   --accent-2: #1b8f5a;
   --danger: #e64545;
   --shadow: 0 8px 24px rgba(8, 22, 53, .12);
-  --glass: backdrop-filter: blur(10px) saturate(120%);
+
 }
 
 /* Base layout */

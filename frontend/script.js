@@ -94,35 +94,7 @@ $("#themeBtn")?.addEventListener("click", () => {
 });
 
 // ================== CIVICBOT: Government Steps ==================
-$("#askBtn")?.addEventListener("click", async () => {
-  const topic = $("#topic")?.value.trim();
-  if (!topic) return toast("#civicStatus", "Type a topic, e.g. birth certificate", false);
 
-  btnLoading("#askBtn", true);
-  toast("#civicStatus", "Loading…");
-  try {
-    const res = await fetch(`${API_BASE}/api/steps?topic=${encodeURIComponent(topic)}`, { mode: "cors" });
-    const data = await res.json();
-    renderSteps(data.steps || []);
-    toast("#civicStatus", "Ready");
-  } catch {
-    renderSteps(demoSteps(topic));
-    toast("#civicStatus", "Backend not reachable — showing demo data.", false);
-  } finally {
-    btnLoading("#askBtn", false);
-  }
-});
-
-function renderSteps(steps) {
-  $("#steps").innerHTML = steps.map(s => `<li>${s}</li>`).join("");
-}
-function demoSteps(topic) {
-  const t = (topic || "").toLowerCase();
-  if (t.includes("birth"))    return ["Open eGov portal", "Fill applicant form", "Upload ID scan", "Pay fee", "Track status"];
-  if (t.includes("marriage")) return ["Schedule appointment", "Bring IDs & witnesses", "Sign registry", "Get digital copy"];
-  if (t.includes("id"))       return ["Submit online request", "Photo & fingerprint at office", "Pay fee", "Pickup or mail"];
-  return ["Demo: No steps found. Try “birth certificate” or “marriage certificate”."];
-}
 
 // ================== CIVICBOT MINI CHAT (hardcoded doctor AI) ==================
 // ===== CivicBot mini chat (phone-like) — DROP-IN REPLACEMENT =====
