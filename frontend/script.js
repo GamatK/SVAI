@@ -34,7 +34,7 @@ $("#themeBtn")?.addEventListener("click", () => {
   document.body.classList.toggle("light");
 });
 
-// ================== CIVICBOT ==================
+// ================== CIVICBOT: Government Steps ==================
 $("#askBtn")?.addEventListener("click", async () => {
   const topic = $("#topic")?.value.trim();
   if (!topic) return toast("#civicStatus", "Type a topic, e.g. birth certificate", false);
@@ -64,6 +64,211 @@ function demoSteps(topic) {
   if (t.includes("id"))       return ["Submit online request", "Photo & fingerprint at office", "Pay fee", "Pickup or mail"];
   return ["Demo: No steps found. Try “birth certificate” or “marriage certificate”."];
 }
+
+// ================== CIVICBOT MINI CHAT (hardcoded doctor AI) ==================
+// ===== CivicBot mini chat (phone-like) — DROP-IN REPLACEMENT =====
+(function civicMini() {
+  function $(id) { return document.getElementById(id); }
+
+  const modal   = $("civicModal");
+  const closeBt = $("civicClose");
+  const chat    = $("civicChat");
+  const input   = $("civicInput");
+  const sendBt  = $("civicSend");
+  const openBt  = $("openCivic");
+
+  if (!modal || !closeBt || !chat || !input || !sendBt || !openBt) return;
+
+  // Open/Close
+  openBt.addEventListener("click", () => {
+    modal.classList.remove("hidden");
+    setTimeout(() => input.focus(), 0);
+  });
+  closeBt.addEventListener("click", () => modal.classList.add("hidden"));
+  modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.add("hidden"); });
+
+  // Bubble helpers
+  function pushUser(text) {
+    const b = document.createElement("div"); b.className = "me"; b.textContent = text;
+    chat.appendChild(b); chat.scrollTop = chat.scrollHeight;
+  }
+  function pushBot(text) {
+    const b = document.createElement("div"); b.className = "bot"; b.textContent = text;
+    chat.appendChild(b); chat.scrollTop = chat.scrollHeight;
+  }
+
+  // --- Patient & Intent detection ---
+  function detectPatient(q) {
+    const t = q.toLowerCase();
+    if (t.includes("amina")) return "amina";
+    if (t.includes("rahim")) return "rahim";
+    if (t.includes("leyla")) return "leyla";
+    if (t.includes("first")) return "amina";
+    if (t.includes("second")) return "rahim";
+    if (t.includes("third")) return "leyla";
+    return null;
+  }
+  function detectIntent(q) {
+    const t = q.toLowerCase();
+    if (/(risk|status|stable|condition|how is|how's)/.test(t)) return "status";
+    if (/(fever|temperature|temp)/.test(t)) return "fever";
+    if (/(oxygen|spo2|ox|saturation)/.test(t)) return "oxygen";
+    if (/(heart rate|hr|pulse)/.test(t)) return "hr";
+    if (/(blood pressure|bp|pressure)/.test(t)) return "bp";
+    if (/(alert|alerts|issues|problems|flags)/.test(t)) return "alerts";
+    return "status"; // default
+  }
+
+  // --- Hardcoded reply bank (feels alive via randomness) ---
+  const BANK = {
+    amina: {
+      status: [
+        "Amina is stable and responding well to treatment.",
+        "Amina feels a bit tired, but overall stable today.",
+        "Amina’s condition looks good; no acute issues noted."
+      ],
+      fever: [
+        "No fever for Amina today.",
+        "Amina reports mild warmth earlier, but no fever recorded.",
+        "Amina is afebrile at this time."
+      ],
+      oxygen: [
+        "Amina’s oxygen looks fine today.",
+        "SpO₂ is within normal range for Amina.",
+        "No oxygen concerns for Amina right now."
+      ],
+      hr: [
+        "Amina’s heart rate is within a comfortable range.",
+        "Pulse is steady for Amina.",
+        "Amina’s HR is acceptable; no tachycardia currently."
+      ],
+      bp: [
+        "Amina’s blood pressure is within expected limits.",
+        "BP is controlled for Amina today.",
+        "No BP spikes for Amina at this check."
+      ],
+      alerts: [
+        "No active alerts for Amina.",
+        "Amina has a low-risk profile right now.",
+        "Nothing urgent flagged for Amina."
+      ]
+    },
+    rahim: {
+      status: [
+        "Rahim is weak today; recommend closer monitoring.",
+        "Rahim shows slight improvement but remains under watch.",
+        "Rahim is borderline stable; continue routine checks."
+      ],
+      fever: [
+        "Rahim is afebrile currently.",
+        "No fever recorded for Rahim.",
+        "Rahim had mild elevation earlier; now normal."
+      ],
+      oxygen: [
+        "Rahim’s oxygen is a little low at times; keep an eye on it.",
+        "SpO₂ dips were noted for Rahim; re-check in a bit.",
+        "Oxygen saturation is acceptable but trending watchful."
+      ],
+      hr: [
+        "Rahim’s HR is mildly elevated; monitor for tachycardia.",
+        "Pulse slightly high for Rahim; reassess after rest.",
+        "Rahim’s heart rate is fluctuating—clinically watchful."
+      ],
+      bp: [
+        "Rahim’s BP is a little high; not critical.",
+        "BP is elevated for Rahim; re-check later.",
+        "Rahim’s blood pressure needs monitoring today."
+      ],
+      alerts: [
+        "Alerts: mild BP elevation, occasional O₂ dips.",
+        "Issues noted: BP and HR trending up—watch.",
+        "Current flags: hemodynamic variability; stay observant."
+      ]
+    },
+    leyla: {
+      status: [
+        "Leyla’s condition is critical; under close observation.",
+        "High risk for Leyla; interventions ongoing.",
+        "Leyla remains unstable; team is monitoring closely."
+      ],
+      fever: [
+        "Leyla has intermittent fever spikes.",
+        "Fever risk is present for Leyla; antipyretics considered.",
+        "Temperature elevated for Leyla; keep monitoring."
+      ],
+      oxygen: [
+        "Leyla’s oxygen saturation is low; supplemental O₂ in place.",
+        "SpO₂ is concerning for Leyla; continuous monitoring.",
+        "Oxygen remains a primary concern for Leyla."
+      ],
+      hr: [
+        "Tachycardia episodes present for Leyla.",
+        "Leyla’s HR is high; managing accordingly.",
+        "Heart rate remains elevated; close watch maintained."
+      ],
+      bp: [
+        "Leyla’s BP is unstable; careful titration ongoing.",
+        "Pressure swings detected for Leyla; managing.",
+        "BP requires continuous monitoring for Leyla."
+      ],
+      alerts: [
+        "Active alerts: low SpO₂, tachycardia, instability.",
+        "Critical flags for Leyla—team notified.",
+        "Multiple alerts present; escalation pathways active."
+      ]
+    }
+  };
+
+  function randomPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function makeReply(patientKey, intent) {
+    const bucket = BANK[patientKey];
+    if (!bucket) return "I don’t know that patient. Try Amina, Rahim, or Leyla.";
+    // If the intent isn't present, fall back to status
+    const list = bucket[intent] || bucket.status;
+    let msg = randomPick(list);
+
+    // Add a short tail to feel dynamic
+    const tails = [
+      " Reassess in 15 minutes.",
+      " Continue routine monitoring.",
+      " Nurse notified.",
+      " Team aware.",
+      " Follow standard protocol."
+    ];
+    if (intent !== "alerts") msg += randomPick(tails);
+    return msg;
+  }
+
+  function handleQuestion(text) {
+    pushUser(text);
+    const who = detectPatient(text);
+    if (!who) {
+      pushBot("I couldn’t find that patient. Try: “How is Amina?”, “Rahim BP?”, “Does Leyla have fever?”");
+      return;
+    }
+    const intent = detectIntent(text);
+    const reply = makeReply(who, intent);
+    pushBot(reply);
+  }
+
+  // Send handlers
+  sendBt.addEventListener("click", () => {
+    const txt = (input.value || "").trim();
+    if (!txt) return;
+    input.value = "";
+    handleQuestion(txt);
+  });
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const txt = (input.value || "").trim();
+      if (!txt) return;
+      input.value = "";
+      handleQuestion(txt);
+    }
+  });
+})();
+
 
 // ================== EMERGENCY WALLET ==================
 $("#walletBtn")?.addEventListener("click", async () => {
@@ -117,7 +322,6 @@ $("#saveWalletBtn")?.addEventListener("click", async () => {
     });
     const d = await res.json();
     fillWallet(d.profile.name, d.profile.id, d.profile.ice, d.profile.medical_notes);
-    // clear inputs
     if ($("#nameIn"))  $("#nameIn").value = "";
     if ($("#idIn"))    $("#idIn").value = "";
     if ($("#iceIn"))   $("#iceIn").value = "";
@@ -137,7 +341,7 @@ $("#printBtn")?.addEventListener("click", () => window.print());
 
 $("#dlBtn")?.addEventListener("click", async () => {
   const card = $("#walletBox");
-  if (!card) return;
+  if (!card || typeof html2canvas === "undefined") return;
   const canvas = await html2canvas(card);
   const link = document.createElement("a");
   link.download = "svai-wallet.png";
@@ -194,7 +398,6 @@ function fillRangeTable(range) {
 function mkChart(ctxId, config) {
   const ctx = document.getElementById(ctxId);
   if (!ctx) return null;
-  // Small charts: container controls height; we disable aspect ratio
   config.options = Object.assign({
     responsive: true,
     maintainAspectRatio: false,
@@ -273,10 +476,8 @@ async function loadDashboard(pid) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Initial Civic demo list rendering
   renderSteps(demoSteps("birth certificate"));
 
-  // Dashboard boot
   const sel = $("#ptSelect");
   const refresh = $("#ptRefreshBtn");
   if (sel && refresh) {

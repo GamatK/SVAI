@@ -31,8 +31,13 @@
         </datalist>
         <button id="askBtn">Get Steps</button>
       </div>
-      <div id="civicStatus" class="status"></div>
+      <div id="civicStatus" class="status" aria-live="polite"></div>
       <ol id="steps" class="steps"></ol>
+
+      <!-- Open CivicBot phone-like chat (CSS :target → always works) -->
+      <div class="row" style="margin-top:8px">
+        <a href="#civicModal" id="openCivic" class="btn">Open CivicBot</a>
+      </div>
     </section>
 
     <!-- Emergency Wallet -->
@@ -74,7 +79,7 @@
       <p class="muted">Pick a patient to view trends & latest vitals.</p>
 
       <div class="row" style="gap:8px;margin:8px 0; align-items:center">
-        <select id="ptSelect"></select>
+        <select id="ptSelect" aria-label="Select patient"></select>
         <button id="ptRefreshBtn">Refresh</button>
       </div>
 
@@ -106,7 +111,7 @@
         <tbody></tbody>
       </table>
 
-      <div id="dashStatus" class="status"></div>
+      <div id="dashStatus" class="status" aria-live="polite"></div>
     </section>
   </main>
 
@@ -115,6 +120,24 @@
   <!-- libs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <!-- CivicBot Mini Chat (phone-like) — CSS :target to open/close -->
+  <div id="civicModal" class="modal">
+    <div class="phone" role="dialog" aria-modal="true" aria-labelledby="civicTitle">
+      <div class="phone-header">
+        <strong id="civicTitle">SVAI CivicBot</strong>
+        <!-- Close by un-targeting the hash -->
+        <a href="#" id="civicClose" aria-label="Close" class="close-x">×</a>
+      </div>
+      <div id="civicChat" class="phone-chat">
+        <div class="bot">Hi! Ask about a patient, e.g. “How is the patient Amina E.?”</div>
+      </div>
+      <div class="phone-input">
+        <input id="civicInput" placeholder="Type your question…" />
+        <button id="civicSend">Send</button>
+      </div>
+    </div>
+  </div>
 
   <!-- app -->
   <script src="script.js"></script>

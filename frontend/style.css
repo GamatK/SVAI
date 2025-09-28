@@ -4,10 +4,11 @@
 :root {
   --bg:#0b1220; --card:#121a2b; --line:#223252; --text:#e7ecf3; --muted:#9fb0cc;
   --action:#4aa3ff; --action-2:#59d38c; --danger:#ff6b6b;
+  --card-2:#161c29; --border:#263247; --fg:#e7ecf3;
 }
 body.light {
   --bg:#f6f7fb; --card:#ffffff; --line:#d9e0ef; --text:#151a26; --muted:#5d6b82;
-  --action:#2f6feb; --action-2:#1b8f5a;
+  --action:#2f6feb; --action-2:#1b8f5a; --card-2:#f6f7fb; --border:#d9e0ef; --fg:#151a26;
 }
 
 html,body { height: 100%; }
@@ -49,6 +50,13 @@ button {
 }
 button:hover { filter:brightness(1.05); }
 button:disabled { opacity:.6; cursor:not-allowed; }
+
+/* Link looking like button */
+a.btn {
+  display:inline-block; padding:8px 10px; border-radius:10px; border:1px solid var(--line);
+  background: var(--action); color:#041226; text-decoration:none; font-weight:600;
+}
+a.btn:hover { filter: brightness(1.05); }
 
 /* Status + lists */
 .status { min-height:24px; margin-top:10px; font-size:.95rem; color:var(--muted); }
@@ -97,20 +105,17 @@ button:disabled { opacity:.6; cursor:not-allowed; }
 }
 .list button:hover { background: var(--bg); }
 
-/* Manual entry form */
-#manualForm input, #manualForm select {
-  padding:6px 8px; border:1px solid var(--line); border-radius:8px; background:var(--card);
-  color:var(--text); flex:1; min-width:100px;
-}
-#manualForm button {
-  padding:6px 12px; border-radius:8px; background:var(--action); color:#fff; border:none; cursor:pointer;
-}
-#manualForm button:hover { background: var(--action-2); }
-
 /* Compact demo charts */
 #chartHr, #chartSpO2, #chartBp, #chartRrTemp {
   height:160px !important;
   max-height:160px !important;
+}
+canvas {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  max-height: 240px;
+  width: 100% !important;
 }
 
 /* Print wallet only */
@@ -121,15 +126,63 @@ button:disabled { opacity:.6; cursor:not-allowed; }
   .nav, .tabs, .footer { display: none !important; }
 }
 
+/* ---- CivicBot modal (phone-like) ---- */
+/* :target trick — open with #civicModal in URL */
+.modal {
+  position: fixed; inset: 0; display: none;
+  background: rgba(0,0,0,.5);
+  align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.modal:target { display: flex; }
+
+.phone {
+  width: 360px; max-width: 92vw; height: 560px; max-height: 90vh;
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  display: grid; grid-template-rows: auto 1fr auto;
+  box-shadow: 0 12px 50px rgba(0,0,0,.35);
+}
+
+.phone-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-bottom: 1px solid var(--border);
+  background: var(--card-2);
+  border-top-left-radius: 20px; border-top-right-radius: 20px;
+}
+.phone-header .close-x { text-decoration:none; color:inherit; font-size:20px; }
+
+.phone-chat {
+  padding: 12px; overflow: auto; display: grid; gap: 8px;
+}
+.phone-input {
+  display: grid; grid-template-columns: 1fr auto; gap: 8px;
+  padding: 10px; border-top: 1px solid var(--border);
+  background: var(--card-2);
+  border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+}
+.phone-input input, .phone-input button {
+  border-radius: 10px;
+}
+.phone-input button { background: var(--action); color: #041226; border: 0; padding: 10px 14px; }
+
+.bot, .me {
+  max-width: 85%; padding: 10px 12px; border-radius: 12px;
+  font-size: 0.95em; line-height: 1.35;
+}
+.bot {
+  background: var(--card-2); border: 1px solid var(--border);
+  justify-self: start;
+}
+.me {
+  background: #2d7cf6; color: #fff;
+  justify-self: end;
+}
+
 /* Mobile tweaks */
 @media (max-width: 520px){
   .row { flex-direction:column; align-items:stretch; }
-  button, input, select { width:100%; }
-}
-canvas {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  max-height: 240px;   /* shrink height */
-  width: 100% !important;
+  button, input, select, a.btn { width:100%; }
 }
