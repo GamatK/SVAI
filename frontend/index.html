@@ -13,6 +13,8 @@
     <nav class="tabs">
       <button class="tab active" data-target="#civic">CivicBot</button>
       <button class="tab" data-target="#wallet">Emergency Wallet</button>
+      <button class="tab" data-target="#dashboard">Doctor Dashboard</button>
+      <button id="themeBtn" class="tab">Toggle Theme</button>
     </nav>
   </header>
 
@@ -21,7 +23,12 @@
     <section id="civic" class="card show">
       <h2>Find Government Steps</h2>
       <div class="row">
-        <input id="topic" placeholder="e.g., birth certificate" value="birth certificate" />
+        <input id="topic" list="topics" placeholder="e.g., birth certificate" value="birth certificate" />
+        <datalist id="topics">
+          <option value="birth certificate"></option>
+          <option value="marriage certificate"></option>
+          <option value="id card"></option>
+        </datalist>
         <button id="askBtn">Get Steps</button>
       </div>
       <div id="civicStatus" class="status"></div>
@@ -32,18 +39,84 @@
     <section id="wallet" class="card">
       <h2>Emergency Wallet</h2>
       <p class="muted">One-tap access to ID mini-card & ICE contact</p>
+
       <button id="walletBtn">Show Info</button>
+
+      <div class="row" style="gap:8px; margin:8px 0">
+        <button id="printBtn">Print Card</button>
+        <button id="dlBtn">Download PNG</button>
+        <button id="shareBtn">Quick Share</button>
+      </div>
+
       <div id="walletBox" class="wallet-box hidden">
         <div><strong>Name:</strong> <span id="wName">—</span></div>
-        <div><strong>ID:</strong> <span id="wId">—</span></div>
+        <div>
+          <strong>ID:</strong> <span id="wId">—</span>
+          <button id="copyIdBtn" style="margin-left:8px">Copy</button>
+        </div>
         <div><strong>ICE:</strong> <span id="wIce">—</span></div>
+        <div><strong>Notes:</strong> <span id="wNotes">—</span></div>
         <div class="qr" id="qrBox" aria-label="QR placeholder">QR</div>
       </div>
+
+      <div class="row" style="margin-top:12px">
+        <input id="nameIn" placeholder="Name (optional)" />
+        <input id="idIn" placeholder="ID (optional)" />
+        <input id="iceIn" placeholder="ICE (optional)" />
+        <input id="notesIn" placeholder="Medical notes (optional)" />
+        <button id="saveWalletBtn">Save</button>
+      </div>
+    </section>
+
+    <!-- Doctor Dashboard -->
+    <section id="dashboard" class="card">
+      <h2>Doctor Dashboard (Demo)</h2>
+      <p class="muted">Pick a patient to view trends & latest vitals.</p>
+
+      <div class="row" style="gap:8px;margin:8px 0; align-items:center">
+        <select id="ptSelect"></select>
+        <button id="ptRefreshBtn">Refresh</button>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="row" style="gap:12px;flex-wrap:wrap">
+        <div class="kpi" id="kpiHr">HR: — <span class="delta"></span></div>
+        <div class="kpi" id="kpiSpO2">SpO₂: — <span class="delta"></span></div>
+        <div class="kpi" id="kpiBp">BP: — <span class="delta"></span></div>
+        <div class="kpi" id="kpiRr">RR: — <span class="delta"></span></div>
+        <div class="kpi" id="kpiTemp">Temp: — <span class="delta"></span></div>
+        <div class="badge" id="riskBadge">Risk: —</div>
+        <div class="badge" id="statusBadge">Status: —</div>
+      </div>
+
+      <!-- Small charts -->
+      <div class="grid2" style="margin-top:10px">
+        <canvas id="chartHr" height="160"></canvas>
+        <canvas id="chartSpO2" height="160"></canvas>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <canvas id="chartBp" height="160"></canvas>
+        <canvas id="chartRrTemp" height="160"></canvas>
+      </div>
+
+      <!-- 24h summary table -->
+      <h3 style="margin-top:10px">24h Range</h3>
+      <table class="table" id="rangeTable">
+        <thead><tr><th>Metric</th><th>Min</th><th>Max</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div id="dashStatus" class="status"></div>
     </section>
   </main>
 
   <footer class="footer">© SVAI — Hackathon demo</footer>
 
+  <!-- libs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <!-- app -->
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,43 @@
+{
+  "emergency_profile": {
+    "name": "Fuad Babayuev",
+    "id": "asfadsfadf",
+    "ice": "5646546",
+    "medical_notes": "he is boy",
+    "updated_at": "2025-09-28T05:34:17Z"
+  },
+  "patients": [
+    {
+      "id": "p001",
+      "name": "Amina E.",
+      "age": 64,
+      "bed": "3B-12",
+      "mrn": "MRN-1001",
+      "status": "Stable",
+      "risk": 12
+    },
+    {
+      "id": "p002",
+      "name": "Rahim K.",
+      "age": 72,
+      "bed": "4A-03",
+      "mrn": "MRN-1002",
+      "status": "Watch",
+      "risk": 38
+    },
+    {
+      "id": "p003",
+      "name": "Leyla S.",
+      "age": 58,
+      "bed": "2C-07",
+      "mrn": "MRN-1003",
+      "status": "Critical",
+      "risk": 72
+    }
+  ],
+  "notes": {
+    "p001": [],
+    "p002": [],
+    "p003": []
+  }
+}
