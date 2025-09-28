@@ -93,7 +93,6 @@ $("#themeBtn")?.addEventListener("click", () => {
   document.body.classList.toggle("light");
 });
 
-// ================== CIVICBOT: Government Steps ==================
 
 
 // ================== CIVICBOT MINI CHAT (hardcoded doctor AI) ==================
@@ -507,20 +506,25 @@ async function loadDashboard(pid) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  renderSteps(demoSteps("birth certificate"));
-
   const sel = $("#ptSelect");
   const refresh = $("#ptRefreshBtn");
   if (sel && refresh) {
     try {
       const firstId = await loadPatients();
-      if (firstId) { sel.value = firstId; await loadDashboard(firstId); }
-    } catch { $("#dashStatus").textContent = "Could not load patients."; }
+      if (firstId) {
+        sel.value = firstId;
+        currentPid = firstId;
+        await loadDashboard(firstId);
+      }
+    } catch {
+      $("#dashStatus").textContent = "Could not load patients.";
+    }
 
     sel.addEventListener("change", () => loadDashboard(sel.value));
     refresh.addEventListener("click", () => loadDashboard(sel.value));
   }
 });
+
 // Build patient list sidebar with risk dots
 async function buildPatientList() {
   const list = document.getElementById("ptList");
@@ -561,8 +565,7 @@ async function buildPatientList() {
   }
 }
 
-// Fill the AI card headline/reasons from your /analyze
-// Fill the AI card headline/reasons (with hardcoded fallback)
+
 async function loadAnalysis(pid) {
   const hl = document.getElementById("aiHeadline");
   const rs = document.getElementById("aiReasons");
