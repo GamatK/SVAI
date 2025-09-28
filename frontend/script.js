@@ -1,6 +1,65 @@
 // ================== CONFIG & HELPERS ==================
 const API_BASE = "http://127.0.0.1:5000";
 
+// --- Hardcoded "AI" fallback (by patient id) ---
+const MOCK_AI_BANK = {
+  p001: { // Amina
+    level: "Stable",
+    risk: 12,
+    messages: [
+      "Stable; continue routine monitoring.",
+      "Stable today; mild fatigue reported.",
+      "Stable and responding well to care."
+    ],
+    reasons: [
+      "Vitals within expected range",
+      "No acute issues flagged",
+      "Symptoms controlled"
+    ],
+    color: "#3a873a"
+  },
+  p002: { // Rahim
+    level: "Watch",
+    risk: 42,
+    messages: [
+      "Warning; reassess within 15 minutes.",
+      "Borderline stable; keep a close eye.",
+      "Slightly elevated risk; repeat checks."
+    ],
+    reasons: [
+      "Mild BP elevation",
+      "Occasional SpO₂ dips",
+      "HR trending up"
+    ],
+    color: "#e6a700"
+  },
+  p003: { // Leyla
+    level: "Critical",
+    risk: 78,
+    messages: [
+      "Critical risk; nurse check within 5 minutes.",
+      "High concern; interventions ongoing.",
+      "Unstable; continuous monitoring required."
+    ],
+    reasons: [
+      "Low SpO₂",
+      "Tachycardia episodes",
+      "Temperature elevated"
+    ],
+    color: "#d11a2d"
+  }
+};
+function mockAI(pid) {
+  const row = MOCK_AI_BANK[pid] || {
+    level: "Stable", risk: 10,
+    messages: ["Stable; routine monitoring."],
+    reasons: ["No specific risks detected."],
+    color: "#3a873a"
+  };
+  const msg = row.messages[Math.floor(Math.random() * row.messages.length)];
+  return { level: row.level, risk: row.risk, message: msg, reasons: row.reasons, color: row.color };
+}
+
 const $  = (q) => document.querySelector(q);
 const $$ = (q) => document.querySelectorAll(q);
 
@@ -489,4 +548,79 @@ document.addEventListener("DOMContentLoaded", async () => {
     sel.addEventListener("change", () => loadDashboard(sel.value));
     refresh.addEventListener("click", () => loadDashboard(sel.value));
   }
+});
+// Build patient list sidebar with risk dots
+async function buildPatientList() {
+  const list = document.getElementById("ptList");
+  if (!list) return;
+  const data = await api("/api/patients");
+  list.innerHTML = "";
+  data.patients.forEach(p => {
+    const li = document.createElement("div");
+    li.className = "pt-item";
+    li.innerHTML = `
+      <div>
+        <div class="pt-name">${p.name}</div>
+        <div class="pt-sub">Bed ${p.bed} — ${p.mrn}</div>
+      </div>
+      <div class="pt-risk ${p.risk>=70?'high':p.risk>=40?'mod':'low'}"></div>
+    `;
+    li.onclick = async () => {
+      const sel = document.getElementById("ptSelect");
+      if (sel) sel.value = p.id;
+      currentPid = p.id;
+      await loadDashboard(p.id);
+      await loadAnalysis(p.id);
+    };
+    list.appendChild(li);
+  });
+
+  // search
+  const q = document.getElementById("ptSearch");
+  if (q && !q._wiredup) {
+    q._wiredup = true;
+    q.addEventListener("input", () => {
+      const term = q.value.toLowerCase();
+      [...list.children].forEach(c => {
+        const txt = c.textContent.toLowerCase();
+        c.style.display = txt.includes(term) ? "" : "none";
+      });
+    });
+  }
+}
+
+// Fill the AI card headline/reasons from your /analyze
+// Fill the AI card headline/reasons (with hardcoded fallback)
+async function loadAnalysis(pid) {
+  const hl = document.getElementById("aiHeadline");
+  const rs = document.getElementById("aiReasons");
+  const aiCard = document.querySelector(".ai-card");
+  const moodSel = document.getElementById("moodSelect");
+
+  // Helper to paint the UI
+  const render = (a) => {
+    if (hl) hl.textContent = `${a.level.toUpperCase()} • Risk ${a.risk} — ${a.message}`;
+    if (rs) rs.textContent = (a.reasons || []).join(" • ") || "No specific risks.";
+    if (aiCard) aiCard.style.borderColor = a.color || "var(--line)";
+  };
+
+  try {
+    // Try real backend first
+    const res = await fetch(`${API_BASE}/api/patient/${pid}/analyze`, { mode: "cors" });
+    if (!res.ok) throw new Error("analyze failed");
+    const a = await res.json();
+    // Pick a border color by level
+    const color = a.level === "Stable" ? "#3a873a" : a.level === "Watch" ? "#e6a700" : "#d11a2d";
+    render({ ...a, color });
+    if (moodSel && a.mood) moodSel.value = a.mood;
+  } catch (e) {
+    // Fallback to our hardcoded “AI”
+    const a = mockAI(pid);
+    render(a);
+  }
+}
+
+// Boot the shell sidebar
+document.addEventListener("DOMContentLoaded", () => {
+  buildPatientList();
 });

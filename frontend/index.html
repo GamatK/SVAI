@@ -22,6 +22,41 @@
   </header>
 
   <main class="container">
+      <!-- Sidebar + Content shell -->
+<section class="shell">
+  <aside class="side">
+    <div class="side-head">
+      <h3>Patients</h3>
+      <input id="ptSearch" placeholder="Search patient…" />
+    </div>
+    <div id="ptList" class="pt-list">
+      <!-- Filled by JS with name + bed + risk dot -->
+    </div>
+  </aside>
+
+  <div class="content">
+    <!-- AI Insight always visible -->
+    <div class="ai-card">
+      <div class="ai-left">
+        <div class="ai-title">AI Insight</div>
+        <div id="aiHeadline" class="ai-headline">—</div>
+        <div id="aiReasons" class="ai-reasons">—</div>
+      </div>
+      <div class="ai-right">
+        <label class="mood-label">Mood</label>
+        <select id="moodSelect" onchange="updateMood(currentPid)">
+          <option value="good">Good</option>
+          <option value="ok" selected>OK</option>
+          <option value="bad">Bad</option>
+        </select>
+        <button class="ghost" id="openCivic">Open CivicBot</button>
+      </div>
+    </div>
+
+    <!-- Keep your existing dashboard card below -->
+  </div>
+</section>
+
     <!-- CivicBot -->
     <section id="civic" class="card show">
       <h2>Find Government Steps</h2>

@@ -246,3 +246,55 @@ body.light .phone-input input { background: #fff; }
   border: 0;
   justify-self: end;
 }
+/* ====== Shell layout ====== */
+.shell { display:grid; grid-template-columns: 260px 1fr; gap:16px; }
+@media (max-width: 980px){ .shell { grid-template-columns: 1fr; } }
+
+.side {
+  border:1px solid var(--line);
+  background: var(--card);
+  border-radius:16px; padding:14px;
+  box-shadow: var(--shadow);
+}
+.side-head { display:flex; gap:10px; align-items:center; justify-content:space-between; }
+.side-head h3 { margin:0; font-size:16px; font-weight:700; }
+#ptSearch { flex:1; background: linear-gradient(180deg,#0f1726,#0b1220); }
+
+.pt-list { display:grid; gap:8px; margin-top:12px; max-height: 520px; overflow:auto; }
+.pt-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 10px; border:1px solid var(--line); border-radius:10px;
+  background: linear-gradient(180deg,#101a30,#0c1528);
+  cursor:pointer; transition: transform .06s ease, border-color .2s ease;
+}
+.pt-item:hover { transform: translateY(-1px); border-color:#2b3f65; }
+.pt-name { font-weight:600; }
+.pt-sub { color: var(--muted); font-size:12px; }
+.pt-risk { width:10px; height:10px; border-radius:999px; }
+.pt-risk.low { background:#3a873a; }
+.pt-risk.mod { background:#e6a700; }
+.pt-risk.high{ background:#d11a2d; }
+
+/* ====== Right content ====== */
+.content { display:grid; gap:16px; }
+
+/* ====== AI Insight card ====== */
+.ai-card {
+  display:grid; grid-template-columns: 1fr auto;
+  gap:16px; align-items:center;
+  border:1px solid var(--line);
+  background: linear-gradient(180deg,#111a2e,#0e172a);
+  border-radius:16px; padding:14px; box-shadow: var(--shadow);
+}
+.ai-title { font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); }
+.ai-headline { margin-top:4px; font-size:18px; font-weight:700; }
+.ai-reasons { margin-top:6px; color:var(--muted); font-size:13px; }
+.ai-right { display:grid; grid-auto-flow:column; gap:10px; align-items:center; }
+.mood-label { font-size:12px; color:var(--muted); }
+
+/* Float CTA on small screens */
+@media (max-width: 780px){
+  #openCivic {
+    position: fixed; right: 16px; bottom: 82px; z-index: 40;
+  }
+}
