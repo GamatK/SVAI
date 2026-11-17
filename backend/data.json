@@ -1,9 +1,9 @@
 {
   "emergency_profile": {
-    "name": "FSDF",
-    "id": "—",
-    "ice": "—",
-    "medical_notes": "—",
+    "name": "Demo User",
+    "id": "AZ-ABC-123456",
+    "ice": "+1 480 555 1212",
+    "medical_notes": "No known allergies. Blood type O+.",
     "updated_at": "2025-09-28T16:44:32Z"
   },
   "patients": [
